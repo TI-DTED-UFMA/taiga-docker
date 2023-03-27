@@ -177,3 +177,7 @@ volumes:
 
 networks:
   taiga:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.34.0.0/24
