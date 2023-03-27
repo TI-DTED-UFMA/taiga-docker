@@ -4,6 +4,7 @@ x-environment:
   &default-back-environment
   # These environment variables will be used by taiga-back and taiga-async.
   # Database settings
+  COMPOSE_PROJECT_NAME: "${COMPOSE_PROJECT_NAME}"
   POSTGRES_DB: "taiga"
   POSTGRES_USER: "${POSTGRES_USER}"
   POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
@@ -38,6 +39,7 @@ x-volumes:
 
 services:
   taiga-db:
+    container_name: "${COMPOSE_PROJECT_NAME}_taiga-db"
     image: postgres:12.3
     environment:
       POSTGRES_DB: "taiga"
@@ -55,6 +57,7 @@ services:
       - taiga
 
   taiga-back:
+    container_name: "${COMPOSE_PROJECT_NAME}_taiga-back"
     image: taigaio/taiga-back:latest
     environment: *default-back-environment
     volumes: *default-back-volumes
@@ -69,6 +72,7 @@ services:
         condition: service_healthy
 
   taiga-async:
+    container_name: "${COMPOSE_PROJECT_NAME}_taiga-async"
     image: taigaio/taiga-back:latest
     entrypoint: ["/taiga-back/docker/async_entrypoint.sh"]
     environment: *default-back-environment
@@ -84,6 +88,7 @@ services:
         condition: service_healthy
 
   taiga-async-rabbitmq:
+    container_name: "${COMPOSE_PROJECT_NAME}_taiga-async-rabbitmq"
     image: rabbitmq:3.8-management-alpine
     environment:
       RABBITMQ_ERLANG_COOKIE: "${RABBITMQ_ERLANG_COOKIE}"
@@ -103,6 +108,7 @@ services:
       - taiga
 
   taiga-front:
+    container_name: "${COMPOSE_PROJECT_NAME}_taiga-front"
     image: taigaio/taiga-front:latest
     environment:
       TAIGA_URL: "${TAIGA_SCHEME}://${TAIGA_DOMAIN}"
@@ -115,6 +121,7 @@ services:
     #   - ./conf.json:/usr/share/nginx/html/conf.json
 
   taiga-events:
+    container_name: "${COMPOSE_PROJECT_NAME}_taiga-events"
     image: taigaio/taiga-events:latest
     environment:
       RABBITMQ_USER: "${RABBITMQ_USER}"
@@ -127,6 +134,7 @@ services:
         condition: service_healthy
 
   taiga-events-rabbitmq:
+    container_name: "${COMPOSE_PROJECT_NAME}_taiga-events-rabbitmq"
     image: rabbitmq:3.8-management-alpine
     environment:
       RABBITMQ_ERLANG_COOKIE: "${RABBITMQ_ERLANG_COOKIE}"
@@ -146,6 +154,7 @@ services:
       - taiga
 
   taiga-protected:
+    container_name: "${COMPOSE_PROJECT_NAME}_taiga-protected"
     image: taigaio/taiga-protected:latest
     environment:
       MAX_AGE: "${ATTACHMENTS_MAX_AGE}"
@@ -154,6 +163,7 @@ services:
       - taiga
 
   taiga-gateway:
+    container_name: "${COMPOSE_PROJECT_NAME}_taiga-gateway"
     image: nginx:1.19-alpine
     ports:
       - "9000:80"
